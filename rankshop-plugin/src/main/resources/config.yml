@@ -7,8 +7,9 @@
 api:
   # Base URL of your backend. The plugin polls <pending-url> for purchases
   # waiting to be applied, and calls <ack-url> to mark one as processed.
-  pending-url: "http://localhost:3000/api/pending-purchases"
-  ack-url: "http://localhost:3000/api/pending-purchases/ack"
+  pending-url: "https://website-six-orpin-37.vercel.app/api/pending-purchases"
+  ack-url: "https://website-six-orpin-37.vercel.app/api/pending-purchases/ack"
+  # Must match the RANKSHOP_API_KEY env var set on the backend, if any.
   # Sent as an "Authorization: Bearer <api-key>" header if non-empty.
   api-key: ""
   poll-interval-seconds: 30
