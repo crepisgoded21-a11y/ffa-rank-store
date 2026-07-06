@@ -36,6 +36,43 @@ Current defaults in this project:
 - Server IP: `mc.effectsffa.xyz` (already set in `src/app/page.tsx`)
 - PayPal.me: `https://paypal.me/Hassaan323` (VIP/Ultimate links preconfigured in `src/app/pay/[rank]/page.tsx`)
 
+## Admin dashboard
+
+`/admin` shows every rank purchase (Purchase ID, IGN, rank, date/time, status)
+with search, filters, sortable columns, and pagination — backed by the same
+Redis store the PayPal checkout writes to. It's protected end-to-end:
+`src/proxy.ts` redirects unauthenticated visitors away from `/admin/*` pages
+and returns 401 for `/api/admin/*` without a valid session, and every admin
+API route re-checks the session itself (defense in depth, not just the
+proxy). Login is rate-limited to 5 attempts per 15 minutes per IP.
+
+### One-time setup
+
+Set three environment variables (locally in `.env.local`, and in Vercel →
+Project → Settings → Environment Variables for production):
+
+```bash
+ADMIN_USERNAME=youradminname
+ADMIN_PASSWORD_HASH=<bcrypt hash, see below>
+ADMIN_SESSION_SECRET=<random 32+ byte secret, see below>
+```
+
+Generate the bcrypt hash for whatever password you want to log in with
+(replace `your-password-here`):
+
+```bash
+node -e "console.log(require('bcryptjs').hashSync('your-password-here', 12))"
+```
+
+Generate a session-signing secret:
+
+```bash
+openssl rand -base64 32
+```
+
+Never commit real values for these — only `.env.local` (gitignored) or your
+hosting provider's environment variable settings.
+
 ## Notes
 
 This project uses Next.js App Router, TypeScript, and Tailwind CSS.

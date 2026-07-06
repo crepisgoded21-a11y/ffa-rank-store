@@ -1,6 +1,7 @@
-import { captureOrder } from "../../../../../lib/paypal";
+import { captureOrder, RANK_PRICES } from "../../../../../lib/paypal";
 import { addPendingPurchase, hasPendingPurchase } from "../../../../../lib/store";
 import { corsJson, corsPreflight } from "../../../../../lib/cors";
+import { purchaseRecordExists, recordPurchase } from "../../../../../lib/purchaseHistory";
 
 export async function OPTIONS() {
   return corsPreflight();
@@ -28,6 +29,17 @@ export async function POST(_request: Request, ctx: RouteContext<"/api/orders/[or
 
   if (!(await hasPendingPurchase(orderId))) {
     await addPendingPurchase({ id: orderId, ...captured.custom });
+  }
+
+  if (!(await purchaseRecordExists(orderId))) {
+    await recordPurchase({
+      id: orderId,
+      ign: captured.custom.ign,
+      rank: captured.custom.rank,
+      nickname: captured.custom.nickname,
+      color: captured.custom.color,
+      amount: RANK_PRICES[captured.custom.rank] ?? "0.00",
+    });
   }
 
   return corsJson({ status: "ok" });
