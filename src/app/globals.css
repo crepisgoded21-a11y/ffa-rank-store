@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+:root {
+  --background: #05070d;
+  --foreground: #f1f5f9;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+::selection {
+  background: rgba(129, 140, 248, 0.35);
+}
+
+/* ---------- Glassmorphism surfaces ---------- */
+
+.glass {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+  position: relative;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  transition: transform 400ms cubic-bezier(0.22, 0.9, 0.32, 1), border-color 400ms ease, box-shadow 400ms ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(165, 180, 252, 0.4);
+  box-shadow: 0 20px 60px -20px rgba(99, 102, 241, 0.45);
+}
+
+.glow-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(120deg, rgba(129, 140, 248, 0.6), rgba(56, 189, 248, 0.5), rgba(217, 70, 239, 0.5));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 400ms ease;
+  pointer-events: none;
+}
+
+.glass-card:hover .glow-border::before {
+  opacity: 1;
+}
+
+/* ---------- Gradient text ---------- */
+
+.gradient-text {
+  background: linear-gradient(120deg, #a5b4fc, #67e8f9 45%, #f0abfc 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- Ambient background orbs ---------- */
+
+.bg-aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bg-aurora::before,
+.bg-aurora::after {
+  content: "";
+  position: absolute;
+  width: 60vw;
+  height: 60vw;
+  max-width: 900px;
+  max-height: 900px;
+  border-radius: 9999px;
+  filter: blur(120px);
+  opacity: 0.35;
+  animation: drift 18s ease-in-out infinite;
+}
+
+.bg-aurora::before {
+  top: -20%;
+  left: -10%;
+  background: radial-gradient(circle, #4f46e5, transparent 70%);
+}
+
+.bg-aurora::after {
+  bottom: -25%;
+  right: -10%;
+  background: radial-gradient(circle, #0ea5e9, transparent 70%);
+  animation-delay: -9s;
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(4%, 6%) scale(1.08); }
+}
+
+/* ---------- Motion ---------- */
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.animate-fadeInUp { animation: fadeInUp 600ms cubic-bezier(.22,.9,.32,1) both; }
+.animate-floatY { animation: floatY 5s ease-in-out infinite; }
+
+.animate-shimmer {
+  background-size: 200% auto;
+  animation: shimmer 6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .animate-fadeInUp,
+  .animate-floatY,
+  .animate-shimmer,
+  .bg-aurora::before,
+  .bg-aurora::after {
+    animation: none !important;
+  }
+}

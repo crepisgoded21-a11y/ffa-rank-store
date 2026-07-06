@@ -1,0 +1,18 @@
+name: RankShop
+version: '${project.version}'
+main: net.effectsffa.rankshop.RankShopPlugin
+api-version: '1.20'
+author: EffectsFFA
+description: Polls a pending-purchases API and applies purchased ranks, nicknames and colors in-game.
+
+commands:
+  rankshop:
+    description: Manage the RankShop plugin.
+    usage: /<command> <reload|recolor|rename> [args]
+    permission: rankshop.admin
+    aliases: [rs]
+
+permissions:
+  rankshop.admin:
+    description: Allows use of /rankshop admin subcommands.
+    default: op

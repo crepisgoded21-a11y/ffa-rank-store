@@ -1,0 +1,57 @@
+# RankShop configuration
+# Placeholders available in command templates below:
+#   %player%     -> the buyer's Minecraft username (IGN)
+#   %nickname%   -> the nickname purchased (CUSTOM rank only)
+#   %color%      -> the purchased color, converted to a Minecraft §x hex sequence
+
+api:
+  # Base URL of your backend. The plugin polls <pending-url> for purchases
+  # waiting to be applied, and calls <ack-url> to mark one as processed.
+  pending-url: "http://localhost:3000/api/pending-purchases"
+  ack-url: "http://localhost:3000/api/pending-purchases/ack"
+  # Sent as an "Authorization: Bearer <api-key>" header if non-empty.
+  api-key: ""
+  poll-interval-seconds: 30
+  # HTTP timeout for each poll/ack request.
+  request-timeout-seconds: 10
+
+# Console commands run for each rank, in order, with %player% substituted.
+# Add/remove/edit freely to match whatever permissions/nickname plugin you use.
+ranks:
+  vip:
+    commands:
+      - "lp user %player% parent set vip"
+  custom:
+    commands:
+      - "lp user %player% parent set custom"
+    # Run only for purchases that include a nickname/color.
+    # Essentials-style example shown; adjust to your nickname plugin's syntax.
+    nickname-command: "nick %player% %color%%nickname%"
+
+nickname:
+  max-length: 16
+  min-length: 3
+  # Characters allowed in a nickname (regex character class).
+  allowed-pattern: "^[A-Za-z0-9_ ]+$"
+  # Case-insensitive substring blacklist (staff-impersonation terms + anything
+  # else you want to block). Add more entries as needed.
+  blacklist:
+    - "admin"
+    - "administrator"
+    - "owner"
+    - "founder"
+    - "staff"
+    - "moderator"
+    - "console"
+    - "system"
+
+messages:
+  rank-applied: "&a[RankShop] Your &f%rank% &arank has been applied! Thanks for supporting the server."
+  nickname-applied: "&a[RankShop] Your custom nickname is now set."
+  purchase-queued: "&e[RankShop] A rank purchase for %player% is queued and will apply on next join."
+
+sound:
+  enabled: true
+  name: "ENTITY_PLAYER_LEVELUP"
+  volume: 1.0
+  pitch: 1.0

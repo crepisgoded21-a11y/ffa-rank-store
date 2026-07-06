@@ -1,0 +1,862 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FFA Rank Store</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0b0d12;
+    --panel: #171a21;
+    --panel-2: #1f232c;
+    --border: #2c313c;
+    --text: #e8eaed;
+    --muted: #9aa0ab;
+    --accent: #55ff55;
+    --accent-2: #55ffff;
+    --danger: #ff5555;
+    --gold: #ffaa00;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(180deg, #0b0d12 0%, #10131a 100%);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    min-height: 100%;
+  }
+
+  .pixel-font {
+    font-family: 'Press Start 2P', monospace;
+    letter-spacing: 0.5px;
+  }
+
+  a { color: inherit; }
+
+  /* ---------- layout ---------- */
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 20px;
+    background: rgba(11, 13, 18, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 3px solid var(--border);
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+  }
+
+  .brand .badge {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent);
+    color: #06210a;
+    font-weight: 700;
+    border: 2px solid #06210a;
+    box-shadow: 3px 3px 0 #06210a;
+  }
+
+  #playerBox {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: var(--panel);
+    border: 2px solid var(--border);
+    padding: 6px 10px 6px 6px;
+  }
+
+  #playerBox img {
+    width: 32px;
+    height: 32px;
+    image-rendering: pixelated;
+    border: 2px solid var(--border);
+  }
+
+  #playerBox .name {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  #playerBox button {
+    font-family: inherit;
+    font-size: 0.7rem;
+    background: var(--panel-2);
+    color: var(--muted);
+    border: 2px solid var(--border);
+    padding: 5px 8px;
+    cursor: pointer;
+  }
+
+  #playerBox button:hover { color: var(--text); border-color: var(--accent); }
+
+  main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  .hero {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .hero .eyebrow {
+    font-size: 0.6rem;
+    color: var(--accent-2);
+    margin-bottom: 14px;
+    display: inline-block;
+  }
+
+  .hero h1 {
+    font-size: clamp(1.1rem, 3vw, 1.8rem);
+    line-height: 1.6;
+    margin: 0 0 12px;
+  }
+
+  .hero p {
+    color: var(--muted);
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 700px) {
+    .cards { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    position: relative;
+    background: var(--panel);
+    border: 3px solid var(--border);
+    padding: 26px;
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.35);
+  }
+
+  .card .rank-name {
+    font-size: 0.95rem;
+    color: var(--accent);
+  }
+
+  .card .price {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 10px 0 4px;
+  }
+
+  .card .desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 16px;
+  }
+
+  .perks { list-style: none; margin: 0 0 24px; padding: 0; }
+  .perks li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    padding: 6px 0;
+    color: #ccd0d6;
+  }
+  .perks li::before {
+    content: "✓";
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  .buy-btn {
+    width: 100%;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 14px;
+    border: 2px solid #06210a;
+    background: var(--accent);
+    color: #06210a;
+    cursor: pointer;
+    box-shadow: 4px 4px 0 #06210a;
+    transition: transform 120ms ease;
+  }
+
+  .buy-btn:hover { transform: translate(-2px, -2px); }
+  .buy-btn:active { transform: translate(0, 0); box-shadow: 2px 2px 0 #06210a; }
+  .buy-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* CUSTOM card stand-out treatment */
+  .card.custom {
+    border: 3px solid transparent;
+    background:
+      linear-gradient(var(--panel), var(--panel)) padding-box,
+      conic-gradient(from var(--angle, 0deg), #ff5555, #ffaa00, #55ff55, #55ffff, #aa55ff, #ff5555) border-box;
+    animation: spin-border 5s linear infinite;
+  }
+
+  @keyframes spin-border {
+    to { --angle: 360deg; }
+  }
+
+  @property --angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  .best-value {
+    position: absolute;
+    top: -14px;
+    right: 20px;
+    background: linear-gradient(90deg, #ffaa00, #ff5555);
+    color: #1a0f00;
+    font-size: 0.6rem;
+    padding: 8px 10px;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.4);
+  }
+
+  .card.custom .buy-btn {
+    background: linear-gradient(90deg, #ffaa00, #ff5555);
+    border-color: #2a0e00;
+    box-shadow: 4px 4px 0 #2a0e00;
+  }
+
+  /* ---------- modal ---------- */
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 5, 8, 0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 16px;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    width: 100%;
+    max-width: 380px;
+    background: var(--panel);
+    border: 3px solid var(--border);
+    box-shadow: 8px 8px 0 rgba(0,0,0,0.45);
+    padding: 26px;
+  }
+
+  .modal h2 {
+    font-size: 0.85rem;
+    margin: 0 0 16px;
+    color: var(--accent-2);
+  }
+
+  .modal label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .modal input[type="text"] {
+    width: 100%;
+    font-family: inherit;
+    font-size: 0.95rem;
+    padding: 12px;
+    background: var(--panel-2);
+    border: 2px solid var(--border);
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .modal input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent-2);
+  }
+
+  .field-error {
+    min-height: 18px;
+    font-size: 0.75rem;
+    color: var(--danger);
+    margin-bottom: 10px;
+  }
+
+  .avatar-preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 14px 0;
+    min-height: 48px;
+  }
+
+  .avatar-preview img {
+    width: 48px;
+    height: 48px;
+    image-rendering: pixelated;
+    border: 2px solid var(--border);
+    display: none;
+  }
+
+  .avatar-preview .hint {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .modal-btn {
+    width: 100%;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 12px;
+    border: 2px solid #06210a;
+    background: var(--accent);
+    color: #06210a;
+    cursor: pointer;
+  }
+
+  .modal-btn:hover { filter: brightness(1.05); }
+
+  /* ---------- custom purchase form ---------- */
+
+  .custom-form {
+    display: none;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 2px dashed var(--border);
+  }
+
+  .custom-form.open { display: block; }
+
+  .custom-form label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin: 12px 0 6px;
+  }
+
+  .custom-form input[type="text"] {
+    width: 100%;
+    font-family: inherit;
+    font-size: 0.9rem;
+    padding: 10px;
+    background: var(--panel-2);
+    border: 2px solid var(--border);
+    color: var(--text);
+  }
+
+  .color-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .swatch {
+    width: 26px;
+    height: 26px;
+    border: 2px solid var(--border);
+    cursor: pointer;
+  }
+
+  .swatch.selected {
+    border-color: #fff;
+    box-shadow: 0 0 0 2px var(--accent-2);
+  }
+
+  .hex-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    align-items: center;
+  }
+
+  .hex-row input[type="color"] {
+    width: 40px;
+    height: 34px;
+    padding: 0;
+    border: 2px solid var(--border);
+    background: none;
+    cursor: pointer;
+  }
+
+  .hex-row input[type="text"] { flex: 1; }
+
+  .nickname-preview {
+    margin-top: 12px;
+    font-size: 0.9rem;
+    padding: 10px;
+    background: var(--panel-2);
+    border: 2px solid var(--border);
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .form-actions .buy-btn { }
+  .cancel-btn {
+    flex: 0 0 auto;
+    font-family: inherit;
+    font-size: 0.85rem;
+    padding: 0 16px;
+    background: var(--panel-2);
+    color: var(--muted);
+    border: 2px solid var(--border);
+    cursor: pointer;
+  }
+
+  /* ---------- toast ---------- */
+
+  #toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--panel);
+    border: 2px solid var(--border);
+    padding: 14px 18px;
+    font-size: 0.85rem;
+    max-width: 90vw;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 250ms ease;
+    z-index: 200;
+  }
+
+  #toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  #toast.success { border-color: var(--accent); }
+  #toast.error { border-color: var(--danger); }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.75rem;
+    padding: 30px 20px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand pixel-font">
+    <span class="badge">FFA</span>
+    <span>RANK STORE</span>
+  </div>
+  <div id="playerBox">
+    <img id="playerAvatar" alt="" />
+    <span class="name" id="playerName"></span>
+    <button id="changeIgnBtn" type="button">Change</button>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <span class="eyebrow pixel-font">MINECRAFT FFA SERVER</span>
+    <h1 class="pixel-font">Gear up with a rank</h1>
+    <p>Pick a rank below, confirm your Minecraft account, and check out. Ranks are applied in-game shortly after purchase.</p>
+  </section>
+
+  <section class="cards" id="cardsContainer"></section>
+</main>
+
+<footer>© 2026 FFA Rank Store — payments processed manually, ranks applied automatically in-game.</footer>
+
+<!-- IGN modal -->
+<div class="modal-overlay" id="ignModal">
+  <div class="modal">
+    <h2 class="pixel-font">WHO'S PLAYING?</h2>
+    <label for="ignInput">Minecraft username (IGN)</label>
+    <input type="text" id="ignInput" maxlength="16" autocomplete="off" placeholder="e.g. Notch" />
+    <div class="field-error" id="ignError"></div>
+    <div class="avatar-preview">
+      <img id="ignAvatarPreview" alt="Skin preview" />
+      <span class="hint" id="ignAvatarHint">We'll show your skin so you can confirm it's the right account.</span>
+    </div>
+    <button class="modal-btn" id="confirmIgnBtn" type="button">Confirm</button>
+  </div>
+</div>
+
+<!-- toast -->
+<div id="toast"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------------------------------------------------------------------
+  // Config — edit this section to customize ranks, perks and price.
+  // ---------------------------------------------------------------------
+
+  // IMPORTANT: change this to your real backend URL before going live.
+  const API_BASE_URL = "http://localhost:3000";
+  const PURCHASE_ENDPOINT = API_BASE_URL + "/api/purchase";
+
+  const RANKS = [
+    {
+      id: "vip",
+      name: "VIP",
+      price: "$10",
+      description: "A solid starter rank with quality-of-life perks.",
+      perks: [
+        "Colored [VIP] prefix",
+        "/fly in the FFA world",
+        "/hat command",
+        "2 extra /sethome slots",
+        "Priority queue join",
+      ],
+      custom: false,
+    },
+    {
+      id: "custom",
+      name: "CUSTOM",
+      price: "$25",
+      description: "Everything in VIP, plus a nickname and color that are 100% yours.",
+      perks: [
+        "All VIP perks",
+        "Custom nickname",
+        "Custom name color (any Minecraft color or hex)",
+      ],
+      custom: true,
+      badge: "BEST VALUE",
+    },
+  ];
+
+  const MC_COLORS = [
+    { name: "Black", hex: "#000000" },
+    { name: "Dark Blue", hex: "#0000AA" },
+    { name: "Dark Green", hex: "#00AA00" },
+    { name: "Dark Aqua", hex: "#00AAAA" },
+    { name: "Dark Red", hex: "#AA0000" },
+    { name: "Dark Purple", hex: "#AA00AA" },
+    { name: "Gold", hex: "#FFAA00" },
+    { name: "Gray", hex: "#AAAAAA" },
+    { name: "Dark Gray", hex: "#555555" },
+    { name: "Blue", hex: "#5555FF" },
+    { name: "Green", hex: "#55FF55" },
+    { name: "Aqua", hex: "#55FFFF" },
+    { name: "Red", hex: "#FF5555" },
+    { name: "Light Purple", hex: "#FF55FF" },
+    { name: "Yellow", hex: "#FFFF55" },
+    { name: "White", hex: "#FFFFFF" },
+  ];
+
+  // Nickname safety filter — case-insensitive substring match.
+  // Staff-impersonation terms are pre-filled; add any slurs/words you
+  // want blocked for your community to the second array.
+  const NICKNAME_BLACKLIST_STAFF = [
+    "admin", "administrator", "owner", "founder", "staff", "moderator",
+    "mod", "console", "system", "developer", "dev", "helper",
+  ];
+  const NICKNAME_BLACKLIST_CUSTOM = [
+    // "wordtoblock",
+  ];
+
+  // ---------------------------------------------------------------------
+  // State
+  // ---------------------------------------------------------------------
+
+  let currentIgn = localStorage.getItem("ffa_ign") || "";
+  let selectedColor = MC_COLORS[10].hex; // Green default
+
+  const els = {
+    modal: document.getElementById("ignModal"),
+    ignInput: document.getElementById("ignInput"),
+    ignError: document.getElementById("ignError"),
+    ignAvatarPreview: document.getElementById("ignAvatarPreview"),
+    ignAvatarHint: document.getElementById("ignAvatarHint"),
+    confirmIgnBtn: document.getElementById("confirmIgnBtn"),
+    playerBox: document.getElementById("playerBox"),
+    playerAvatar: document.getElementById("playerAvatar"),
+    playerName: document.getElementById("playerName"),
+    changeIgnBtn: document.getElementById("changeIgnBtn"),
+    cardsContainer: document.getElementById("cardsContainer"),
+    toast: document.getElementById("toast"),
+  };
+
+  function isValidIgn(value) {
+    return /^[A-Za-z0-9_]{3,16}$/.test(value);
+  }
+
+  function showToast(message, type) {
+    els.toast.textContent = message;
+    els.toast.className = "show " + (type || "");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => {
+      els.toast.className = "";
+    }, 4200);
+  }
+
+  // ---------------------------------------------------------------------
+  // IGN modal
+  // ---------------------------------------------------------------------
+
+  function openIgnModal() {
+    els.ignInput.value = currentIgn;
+    els.ignError.textContent = "";
+    els.modal.classList.add("open");
+    updateAvatarPreview(currentIgn);
+    setTimeout(() => els.ignInput.focus(), 50);
+  }
+
+  function closeIgnModal() {
+    els.modal.classList.remove("open");
+  }
+
+  function updateAvatarPreview(value) {
+    if (isValidIgn(value)) {
+      els.ignAvatarPreview.src = "https://mc-heads.net/avatar/" + encodeURIComponent(value) + "/48";
+      els.ignAvatarPreview.style.display = "block";
+      els.ignAvatarHint.textContent = "That you, " + value + "?";
+    } else {
+      els.ignAvatarPreview.style.display = "none";
+      els.ignAvatarHint.textContent = "We'll show your skin so you can confirm it's the right account.";
+    }
+  }
+
+  els.ignInput.addEventListener("input", () => {
+    updateAvatarPreview(els.ignInput.value.trim());
+  });
+
+  els.confirmIgnBtn.addEventListener("click", () => {
+    const value = els.ignInput.value.trim();
+    if (!isValidIgn(value)) {
+      els.ignError.textContent = "3-16 characters: letters, numbers and underscores only.";
+      return;
+    }
+    currentIgn = value;
+    localStorage.setItem("ffa_ign", currentIgn);
+    applyPlayerBox();
+    closeIgnModal();
+  });
+
+  els.ignInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") els.confirmIgnBtn.click();
+  });
+
+  els.changeIgnBtn.addEventListener("click", openIgnModal);
+
+  function applyPlayerBox() {
+    if (!currentIgn) {
+      els.playerBox.style.display = "none";
+      return;
+    }
+    els.playerBox.style.display = "flex";
+    els.playerName.textContent = currentIgn;
+    els.playerAvatar.src = "https://mc-heads.net/avatar/" + encodeURIComponent(currentIgn) + "/32";
+  }
+
+  // ---------------------------------------------------------------------
+  // Store cards
+  // ---------------------------------------------------------------------
+
+  function renderCards() {
+    els.cardsContainer.innerHTML = "";
+
+    RANKS.forEach((rank) => {
+      const card = document.createElement("article");
+      card.className = "card" + (rank.custom ? " custom" : "");
+
+      let html = "";
+      if (rank.badge) html += `<span class="best-value pixel-font">${rank.badge}</span>`;
+      html += `<p class="rank-name pixel-font">${rank.name}</p>`;
+      html += `<p class="price">${rank.price}</p>`;
+      html += `<p class="desc">${rank.description}</p>`;
+      html += `<ul class="perks">${rank.perks.map((p) => `<li>${p}</li>`).join("")}</ul>`;
+      html += `<button class="buy-btn" data-rank="${rank.id}" type="button">Purchase ${rank.name}</button>`;
+
+      if (rank.custom) {
+        html += buildCustomFormHtml();
+      }
+
+      card.innerHTML = html;
+      els.cardsContainer.appendChild(card);
+    });
+
+    els.cardsContainer.querySelectorAll(".buy-btn").forEach((btn) => {
+      btn.addEventListener("click", () => onPurchaseClick(btn.dataset.rank, btn));
+    });
+
+    const customForm = document.getElementById("customForm");
+    if (customForm) wireCustomForm(customForm);
+  }
+
+  function buildCustomFormHtml() {
+    const swatches = MC_COLORS.map(
+      (c) => `<span class="swatch" data-hex="${c.hex}" style="background:${c.hex}" title="${c.name}"></span>`
+    ).join("");
+
+    return `
+      <div class="custom-form" id="customForm">
+        <label for="nicknameInput">Desired nickname (max 16 characters)</label>
+        <input type="text" id="nicknameInput" maxlength="16" placeholder="e.g. ShadowWolf" autocomplete="off" />
+        <div class="field-error" id="nicknameError"></div>
+
+        <label>Name color</label>
+        <div class="color-swatches" id="colorSwatches">${swatches}</div>
+        <div class="hex-row">
+          <input type="color" id="hexPicker" value="${selectedColor}" />
+          <input type="text" id="hexInput" placeholder="#55FF55" value="${selectedColor}" />
+        </div>
+
+        <div class="nickname-preview" id="nicknamePreview">Preview: <span id="previewText">ShadowWolf</span></div>
+
+        <div class="form-actions">
+          <button class="buy-btn" id="confirmCustomBtn" type="button">Confirm purchase — $25</button>
+          <button class="cancel-btn" id="cancelCustomBtn" type="button">Cancel</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function wireCustomForm(form) {
+    const nicknameInput = form.querySelector("#nicknameInput");
+    const nicknameError = form.querySelector("#nicknameError");
+    const swatchesWrap = form.querySelector("#colorSwatches");
+    const hexPicker = form.querySelector("#hexPicker");
+    const hexInput = form.querySelector("#hexInput");
+    const previewText = form.querySelector("#previewText");
+    const confirmBtn = form.querySelector("#confirmCustomBtn");
+    const cancelBtn = form.querySelector("#cancelCustomBtn");
+
+    function setSelectedColor(hex) {
+      selectedColor = hex;
+      hexPicker.value = hex;
+      hexInput.value = hex;
+      previewText.style.color = hex;
+      swatchesWrap.querySelectorAll(".swatch").forEach((s) => {
+        s.classList.toggle("selected", s.dataset.hex.toLowerCase() === hex.toLowerCase());
+      });
+    }
+
+    swatchesWrap.querySelectorAll(".swatch").forEach((s) => {
+      s.addEventListener("click", () => setSelectedColor(s.dataset.hex));
+    });
+
+    hexPicker.addEventListener("input", () => setSelectedColor(hexPicker.value));
+
+    hexInput.addEventListener("input", () => {
+      const value = hexInput.value.trim();
+      if (/^#[0-9A-Fa-f]{6}$/.test(value)) setSelectedColor(value);
+    });
+
+    nicknameInput.addEventListener("input", () => {
+      previewText.textContent = nicknameInput.value || "ShadowWolf";
+      nicknameError.textContent = "";
+    });
+
+    cancelBtn.addEventListener("click", () => form.classList.remove("open"));
+
+    confirmBtn.addEventListener("click", () => {
+      const nickname = nicknameInput.value.trim();
+      const validation = validateNickname(nickname);
+      if (!validation.ok) {
+        nicknameError.textContent = validation.reason;
+        return;
+      }
+      submitPurchase("custom", { nickname, color: selectedColor }, confirmBtn);
+    });
+
+    setSelectedColor(selectedColor);
+  }
+
+  function validateNickname(nickname) {
+    if (nickname.length < 3 || nickname.length > 16) {
+      return { ok: false, reason: "Nickname must be 3-16 characters." };
+    }
+    if (!/^[A-Za-z0-9_ ]+$/.test(nickname)) {
+      return { ok: false, reason: "Only letters, numbers, underscores and spaces are allowed." };
+    }
+    const lower = nickname.toLowerCase();
+    const blocked = NICKNAME_BLACKLIST_STAFF.concat(NICKNAME_BLACKLIST_CUSTOM).some((word) =>
+      word && lower.includes(word.toLowerCase())
+    );
+    if (blocked) {
+      return { ok: false, reason: "That nickname isn't allowed. Please choose another." };
+    }
+    return { ok: true };
+  }
+
+  function onPurchaseClick(rankId, btn) {
+    if (!currentIgn) {
+      openIgnModal();
+      return;
+    }
+    if (rankId === "custom") {
+      const form = document.getElementById("customForm");
+      form.classList.toggle("open");
+      return;
+    }
+    submitPurchase(rankId, {}, btn);
+  }
+
+  async function submitPurchase(rankId, extra, btn) {
+    const payload = Object.assign({ ign: currentIgn, rank: rankId }, extra);
+    const originalText = btn ? btn.textContent : "";
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Processing...";
+    }
+
+    try {
+      const res = await fetch(PURCHASE_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error("Server responded with " + res.status);
+
+      showToast("Purchase submitted! Your rank will be applied in-game shortly.", "success");
+      const form = document.getElementById("customForm");
+      if (form) form.classList.remove("open");
+    } catch (err) {
+      showToast(
+        "Could not reach the store backend (" + err.message + "). Check API_BASE_URL in index.html.",
+        "error"
+      );
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // Init
+  // ---------------------------------------------------------------------
+
+  renderCards();
+  applyPlayerBox();
+  if (!currentIgn) openIgnModal();
+})();
+</script>
+</body>
+</html>
