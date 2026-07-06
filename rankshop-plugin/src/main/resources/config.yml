@@ -68,7 +68,7 @@ gui:
     vip:
       slot: 11
       material: IRON_CHESTPLATE
-      display-name: "&b&lVIP &7- $10"
+      display-name: "&b&lVIP &7- $4.99"
       lore:
         - "&7Priority queue join"
         - "&7/fly in the FFA world"
@@ -79,7 +79,7 @@ gui:
     custom:
       slot: 15
       material: NETHER_STAR
-      display-name: "&d&lCUSTOM &7- $25"
+      display-name: "&d&lCUSTOM &7- $19.99"
       lore:
         - "&7All VIP perks"
         - "&7Custom nickname"

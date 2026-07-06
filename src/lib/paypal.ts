@@ -9,8 +9,8 @@ const PAYPAL_API_BASE =
 
 // Server-side source of truth for prices — never trust a client-supplied amount.
 export const RANK_PRICES: Record<string, string> = {
-  vip: "10.00",
-  custom: "25.00",
+  vip: "4.99",
+  custom: "19.99",
 };
 
 async function getAccessToken(): Promise<string> {
