@@ -11,9 +11,9 @@ const rankData: Record<string, { title: string; price: string; description: stri
   },
   ultimate: {
     title: "Ultimate",
-    price: "$19.99",
+    price: "$24.99",
     description: "Ultimate rank: all VIP perks plus cosmetics and elite events.",
-    paypal: "https://paypal.me/Hassaan323/19.99",
+    paypal: "https://paypal.me/Hassaan323/24.99",
     perks: ["All VIP perks", "Exclusive cosmetics", "Elite-only events"],
   },
 };

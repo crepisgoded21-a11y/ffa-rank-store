@@ -14,7 +14,7 @@ const ranks = [
   },
   {
     title: "Ultimate",
-    price: "$19.99",
+    price: "$24.99",
     description: "Ultimate rank: all VIP perks plus cosmetics and elite events.",
     perks: ["All VIP perks", "Exclusive cosmetics", "Elite-only events"],
     href: "/pay/ultimate",
