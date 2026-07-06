@@ -82,7 +82,7 @@ public class ApiClient {
                     .POST(HttpRequest.BodyPublishers.ofString(body));
             applyAuth(builder);
 
-            HttpResponse<String> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.discarding());
+            HttpResponse<Void> response = httpClient.send(builder.build(), HttpResponse.BodyHandlers.discarding());
             if (response.statusCode() >= 300) {
                 logger.warning("RankShop failed to ack purchase " + purchaseId + " (status " + response.statusCode() + ")");
             }
