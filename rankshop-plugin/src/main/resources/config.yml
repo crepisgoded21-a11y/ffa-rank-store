@@ -70,19 +70,30 @@ gui:
       material: IRON_CHESTPLATE
       display-name: "&b&lVIP &7- $4.99"
       lore:
-        - "&7Priority queue join"
-        - "&7/fly in the FFA world"
+        - "&7[VIP] prefix in chat & tab"
+        - "&7Colored chat name"
+        - "&7Particle trails"
         - "&7/hat command"
-        - "&72 extra /sethome slots"
+        - "&7Highlighted join message"
+        - "&7VIP Discord role"
+        - "&7Rename your sword"
         - ""
         - "&eClick to open the store"
     custom:
       slot: 15
       material: NETHER_STAR
-      display-name: "&d&lCUSTOM &7- $24.99"
+      display-name: "&d&lCUSTOM &7- $14.99"
       lore:
         - "&7All VIP perks"
-        - "&7Custom nickname"
-        - "&7Custom name color"
+        - "&7Custom prefix (your text + colors)"
+        - "&7Custom kill message"
+        - "&7Custom join message"
+        - "&7Kill effects"
+        - "&7Banners + banner editor"
+        - "&7Armor trims (visual only)"
+        - "&7Cosmetic pets"
+        - "&7Emotes: /sit /wave /spin"
+        - "&7Custom tab list color"
+        - "&7Killstreak flex title"
         - ""
         - "&eClick to open the store"
