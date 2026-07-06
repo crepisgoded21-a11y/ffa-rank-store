@@ -11,6 +11,9 @@ commands:
     usage: /<command> <reload|recolor|rename> [args]
     permission: rankshop.admin
     aliases: [rs]
+  rank:
+    description: Open the rank store GUI.
+    usage: /<command>
 
 permissions:
   rankshop.admin:

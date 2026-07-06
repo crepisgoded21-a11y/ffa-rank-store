@@ -19,7 +19,11 @@ rankshop-plugin/
     ColorUtil.java             hex -> §x conversion, legacy '&' code translation
     PurchaseProcessor.java     applies a purchase: runs commands, messages, sound
     commands/RankShopCommand.java   /rankshop reload|recolor|rename
+    commands/RankCommand.java       /rank — opens the rank store GUI
+    gui/RankGui.java                builds the GUI inventory from config
+    gui/RankGuiHolder.java          identifies our GUI's inventory instances
     listeners/PlayerJoinListener.java   applies queued purchases on join
+    listeners/RankGuiListener.java      handles GUI clicks, sends purchase link
   src/main/resources/
     plugin.yml
     config.yml
@@ -86,6 +90,15 @@ All require the `rankshop.admin` permission (defaults to op).
 - `/rankshop rename <player> <nickname> [hex]` — re-applies the
   nickname-command with a new nickname (validated server-side). `hex`
   defaults to white if omitted.
+
+## /rank GUI
+
+`/rank` opens an inventory menu (configured under `gui:` in config.yml) showing
+each rank as an item — material, display name and lore are all configurable
+per rank. Minecraft can't process PayPal payments directly, so clicking an
+item sends the player a clickable chat message linking to `gui.store-url`
+(your rank store site) instead of charging them in-game. No permission is
+required by default — anyone can browse with `/rank`.
 
 ## Notes
 

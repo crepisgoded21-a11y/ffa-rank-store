@@ -1,7 +1,10 @@
 package net.effectsffa.rankshop;
 
+import net.effectsffa.rankshop.commands.RankCommand;
 import net.effectsffa.rankshop.commands.RankShopCommand;
+import net.effectsffa.rankshop.gui.RankGui;
 import net.effectsffa.rankshop.listeners.PlayerJoinListener;
+import net.effectsffa.rankshop.listeners.RankGuiListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -29,7 +32,11 @@ public class RankShopPlugin extends JavaPlugin {
         getCommand("rankshop").setExecutor(commandHandler);
         getCommand("rankshop").setTabCompleter(commandHandler);
 
+        RankGui rankGui = new RankGui(this);
+        getCommand("rank").setExecutor(new RankCommand(rankGui));
+
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(pendingQueue, purchaseProcessor), this);
+        Bukkit.getPluginManager().registerEvents(new RankGuiListener(this), this);
 
         startPolling();
         getLogger().info("RankShop enabled.");

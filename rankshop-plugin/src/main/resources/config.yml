@@ -56,3 +56,33 @@ sound:
   name: "ENTITY_PLAYER_LEVELUP"
   volume: 1.0
   pitch: 1.0
+
+# /rank opens this GUI so players can browse ranks in-game. Purchases still
+# happen on the website (Minecraft can't process PayPal directly) — clicking
+# an item sends the player a clickable link to store-url.
+gui:
+  title: "&8&lRank Store"
+  size: 27
+  store-url: "https://effectsffa.xyz"
+  ranks:
+    vip:
+      slot: 11
+      material: IRON_CHESTPLATE
+      display-name: "&b&lVIP &7- $10"
+      lore:
+        - "&7Priority queue join"
+        - "&7/fly in the FFA world"
+        - "&7/hat command"
+        - "&72 extra /sethome slots"
+        - ""
+        - "&eClick to open the store"
+    custom:
+      slot: 15
+      material: NETHER_STAR
+      display-name: "&d&lCUSTOM &7- $25"
+      lore:
+        - "&7All VIP perks"
+        - "&7Custom nickname"
+        - "&7Custom name color"
+        - ""
+        - "&eClick to open the store"
