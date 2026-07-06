@@ -711,6 +711,7 @@
       html += `<ul class="perks">${rank.perks.map((p) => `<li>${p}</li>`).join("")}</ul>`;
 
       if (rank.custom) {
+        html += `<button class="buy-btn" id="openCustomFormBtn" type="button">Get CUSTOM — ${rank.price}</button>`;
         html += buildCustomFormHtml();
       } else {
         html += `<div class="paypal-container" id="paypal-${rank.id}"></div>`;
@@ -756,6 +757,7 @@
   }
 
   function wireCustomForm(form) {
+    const openBtn = document.getElementById("openCustomFormBtn");
     const nicknameInput = form.querySelector("#nicknameInput");
     const nicknameError = form.querySelector("#nicknameError");
     const swatchesWrap = form.querySelector("#colorSwatches");
@@ -792,9 +794,16 @@
       nicknameError.textContent = "";
     });
 
+    openBtn.addEventListener("click", () => {
+      form.classList.add("open");
+      openBtn.style.display = "none";
+    });
+
     cancelBtn.addEventListener("click", () => {
       form.classList.remove("open");
       paypalContainer.style.display = "none";
+      confirmBtn.style.display = "";
+      openBtn.style.display = "";
     });
 
     confirmBtn.addEventListener("click", () => {
