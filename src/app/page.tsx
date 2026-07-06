@@ -6,7 +6,7 @@ const serverIp = "mc.effectsffa.xyz";
 const ranks = [
   {
     title: "VIP",
-    price: "$10",
+    price: "$4.99",
     description: "VIP rank with priority queue, custom tag, and extra kit slot.",
     perks: ["Priority queue", "Custom rank tag", "Extra kit slot"],
     href: "/pay/vip",
@@ -14,7 +14,7 @@ const ranks = [
   },
   {
     title: "Ultimate",
-    price: "$30",
+    price: "$19.99",
     description: "Ultimate rank: all VIP perks plus cosmetics and elite events.",
     perks: ["All VIP perks", "Exclusive cosmetics", "Elite-only events"],
     href: "/pay/ultimate",

@@ -4,16 +4,16 @@ import Reveal from "../../../components/Reveal";
 const rankData: Record<string, { title: string; price: string; description: string; paypal?: string; perks: string[] }> = {
   vip: {
     title: "VIP",
-    price: "$10",
+    price: "$4.99",
     description: "VIP rank with priority queue, custom tag, and extra kit slot.",
-    paypal: "https://paypal.me/Hassaan323/10",
+    paypal: "https://paypal.me/Hassaan323/4.99",
     perks: ["Priority queue", "Custom rank tag", "Extra kit slot"],
   },
   ultimate: {
     title: "Ultimate",
-    price: "$30",
+    price: "$19.99",
     description: "Ultimate rank: all VIP perks plus cosmetics and elite events.",
-    paypal: "https://paypal.me/Hassaan323/30",
+    paypal: "https://paypal.me/Hassaan323/19.99",
     perks: ["All VIP perks", "Exclusive cosmetics", "Elite-only events"],
   },
 };
