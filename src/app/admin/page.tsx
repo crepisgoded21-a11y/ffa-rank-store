@@ -96,22 +96,24 @@ export default function AdminDashboardPage() {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
-    <div className="min-h-screen bg-[#05070d] px-6 py-10 text-white">
+    <div className="min-h-screen px-6 py-10 text-white">
       <div className="mx-auto max-w-6xl">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-slate-400">FFA Rank Shop</p>
-            <h1 className="mt-1 text-2xl font-semibold">Purchases</h1>
+            <h1 className="mt-1 text-3xl font-bold">
+              <span className="gradient-text">Purchases</span>
+            </h1>
           </div>
           <button
             onClick={handleLogout}
-            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300 hover:text-white"
+            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300 backdrop-blur-xl transition-colors hover:text-white"
           >
             Log out
           </button>
         </div>
 
-        <div className="mt-6 flex flex-wrap gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+        <div className="glass mt-6 flex flex-wrap gap-3 rounded-2xl p-4">
           <input
             type="text"
             placeholder="Search IGN or Purchase ID"
@@ -170,7 +172,7 @@ export default function AdminDashboardPage() {
 
         {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
 
-        <div className="mt-6 overflow-x-auto rounded-xl border border-white/10">
+        <div className="glass mt-6 overflow-x-auto rounded-2xl">
           <table className="w-full min-w-[720px] text-left text-sm">
             <thead className="bg-white/5 text-slate-400">
               <tr>
